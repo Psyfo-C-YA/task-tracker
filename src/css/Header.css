@@ -1,0 +1,12 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.h1-color {
+  color: var(--color-rust);
+  text-align: center;
+}
