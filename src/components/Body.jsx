@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import React from 'react';
 import PropTypes from 'prop-types';
 import '../css/Body.css';
@@ -8,57 +8,62 @@ import Task from './Task';
 import AddTask from './AddTask';
 
 const Body = () => {
-  const onClick = () => {
-    window.alert('btn clicked');
-  };
+  const [tasks, setTasks] = useState([]);
 
   const [showAddTask, setShowAddTask] = useState(true);
 
+  useEffect(() => {
+    const getTasks = async () => {
+      const tasksFromServer = await fetchTasks();
+      setTasks(tasksFromServer);
+    };
+
+    getTasks();
+  }, []);
+
+  //Fetch Tasks
+  const fetchTasks = async () => {
+    const res = await fetch('http://localhost:5000/tasks');
+    const data = await res.json();
+
+    return data;
+  };
+
   // Add Task
-  const addTask = (task) => {
-    const id = Math.floor(Math.random() * 10000) + 1;
-    const newTask = { id, ...task };
-    setTasks([...tasks, newTask]);
+  const addTask = async (task) => {
+    const res = await fetch('http://localhost:5000/tasks', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(task),
+    });
+
+    const data = await res.json();
+
+    setTasks([...tasks, data]);
+    // const id = Math.floor(Math.random() * 10000) + 1;
+    // const newTask = { id, ...task };
+    // setTasks([...tasks, newTask]);
   };
 
   // Delete Task
-  const deleteTask = (id) => {
-    window.alert('delete', id);
-    console.log('delete', id);
+  const deleteTask = async (id) => {
+    await fetch(`http://localhost:5000/tasks/${id}`, {
+      method: 'DELETE',
+    });
+
     setTasks(tasks.filter((task) => task.id !== id));
   };
 
   //Toggle Reminder
   const toggleReminder = (id) => {
-    window.alert('dblCLicked', id);
-    console.log(id);
     setTasks(
       tasks.map((task) =>
         task.id === id ? { ...task, reminder: !task.reminder } : task
       )
     );
   };
-
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      text: 'Doctors Appointment',
-      day: 'Feb 5th at 2:30pm',
-      reminder: true,
-    },
-    {
-      id: 2,
-      text: 'Meeting at School',
-      day: 'Feb 6th at 1:30pm',
-      reminder: true,
-    },
-    {
-      id: 3,
-      text: 'Food Shopping',
-      day: 'Feb 5th at 2:30pm',
-      reminder: false,
-    },
-  ]);
 
   return (
     <div className="container">
@@ -68,7 +73,6 @@ const Body = () => {
           color={showAddTask ? 'red' : 'green'}
           text={showAddTask ? 'Close' : 'Add'}
           onClick={() => setShowAddTask(!showAddTask)}
-          showAddBtn={showAddTask}
         />
       </h2>
       {showAddTask ? <AddTask onAdd={addTask} /> : ''}

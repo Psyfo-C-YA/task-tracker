@@ -12,6 +12,7 @@ const Footer = ({ alias }) => {
         {' '}
         {_year} © {alias}
       </p>
+      <a href="/about">About</a>
     </footer>
   );
 };
@@ -22,7 +23,7 @@ Footer.defaultProps = {
 };
 
 Footer.propTypes = {
-  year: PropTypes.string,
+  year: PropTypes.number,
   alias: PropTypes.string,
 };
 

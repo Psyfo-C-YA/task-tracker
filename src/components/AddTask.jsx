@@ -58,7 +58,7 @@ const AddTask = ({ onAdd }) => {
 };
 
 AddTask.propTypes = {
-  onAdd: PropTypes.object,
+  onAdd: PropTypes.func,
 };
 
 export default AddTask;
